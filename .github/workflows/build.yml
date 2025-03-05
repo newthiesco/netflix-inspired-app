@@ -38,8 +38,8 @@ jobs:
           trivy fs .
 
       - name: Docker build and push
-      #   env:
-      #     DOCKER_CLI_ACI: 1
+        env:
+          DOCKER_CLI_ACI: 1
         run: |
           # Build and push Docker image
           docker build --build-arg TMDB_V3_API_KEY=5c4fe4f4db86d9e839acae49e3c7dfd9 -t netflix .
