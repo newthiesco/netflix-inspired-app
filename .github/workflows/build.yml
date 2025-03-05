@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0 # Shallow clones should be disabled for better relevancy of analysis
 
       - uses: sonarsource/sonarqube-scan-action@master
         env:
@@ -46,3 +46,16 @@ jobs:
           docker tag netflix thiexco/netflix:latest
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
           docker push thiexco/netflix:latest
+
+  deploy:    
+    needs: build   # Corrected dependency to 'build'
+    runs-on: aws-netflix  
+    steps:
+      - name: Pull the Docker image
+        run: docker pull thiexco/netflix:latest
+      
+      - name: Trivy image scan
+        run: trivy image thiexco/netflix:latest
+
+      - name: Run the Netflix container
+        run: docker run -d --name netflix -p 8081:80 thiexco/netflix:latest
